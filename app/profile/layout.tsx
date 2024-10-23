@@ -1,3 +1,4 @@
+"use client"
 import { UserContext } from "@/Context/UserContext";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
