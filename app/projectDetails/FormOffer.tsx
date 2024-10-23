@@ -9,6 +9,20 @@ import { FreelancerContext } from "@/Context/FreelancerContext";
 import { Textarea } from "@/components/ui/textarea";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+// Define the structure of the context
+interface FreelancerContextType {
+  AddOffer: (values: FormValues) => Promise<any>;
+  ObjectUpdateOffers: {
+    id: number;
+    implementation_duration: string;
+    askingPrice: string;
+    description: string;
+  };
+  UpdateOffer: (values: FormValues, id: number) => Promise<any>;
+}
+
+// Define the structure of form values
 interface FormValues {
   implementationDuration: string;
   askingPrice: string;
@@ -16,10 +30,18 @@ interface FormValues {
   taskId?: number;
 }
 
-export default function FormOffer({ id, Update, setUpdate, setState }: any) {
-  const { AddOffer, ObjectUpdateOffers, UpdateOffer }: any = useContext(FreelancerContext);
+// Define the props for the FormOffer component
+interface FormOfferProps {
+  id: number;
+  Update: boolean;
+  setUpdate: (update: boolean) => void;
+  setState: (state: boolean) => void;
+}
+
+export default function FormOffer({ id, Update, setUpdate, setState }: FormOfferProps) {
+  const { AddOffer, ObjectUpdateOffers, UpdateOffer } = useContext(FreelancerContext) as FreelancerContextType;
   const [loading, setLoading] = useState(false); // Add loading state
-  let [ID, setID] = useState<number>(1);
+  const [ID, setID] = useState<number>(1);
 
   const validationSchema = Yup.object().shape({
     implementationDuration: Yup.number()
@@ -36,7 +58,7 @@ export default function FormOffer({ id, Update, setUpdate, setState }: any) {
       implementationDuration: '',
       askingPrice: '',
       description: "",
-      taskId: +id,
+      taskId: id,
     },
     validationSchema,
     onSubmit: Update ? updateOff : fetchHandleOffer,
@@ -52,8 +74,8 @@ export default function FormOffer({ id, Update, setUpdate, setState }: any) {
         formik.resetForm();
         setState(true);
       } 
-      if (result.errorMessage == "Not Authorized User") {
-                toast.success("you can add offer if you client");
+      if (result.errorMessage === "Not Authorized User") {
+        toast.success("You can add an offer if you're a client");
       }
     } catch (error: any) {
       console.log(error);
@@ -92,7 +114,7 @@ export default function FormOffer({ id, Update, setUpdate, setState }: any) {
 
   return (
     <>
-            <ToastContainer />
+      <ToastContainer />
       <form className="p-4" onSubmit={formik.handleSubmit}>
         <div className="grid gap-2 grid-cols-2">
           <div className="col-span-2 grid gap-6 grid-cols-2">

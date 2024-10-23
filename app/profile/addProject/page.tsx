@@ -10,18 +10,19 @@ import { FreelancerContext } from '@/Context/FreelancerContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Define validation schema with Yup
+
+
+export default function AddProject() {
+
 const validationSchema = Yup.object({
   title: Yup.string().required('Title is required'),
   description: Yup.string().required('Description is required'),
   link: Yup.string().url('Invalid URL format').required('Link is required'),
   image: Yup.mixed().required('Image is required'), // Ensure image is provided
 });
-
-export default function AddProject() {
-  const { AddProj }: any = useContext(FreelancerContext);
+const { AddProj }: any = useContext(FreelancerContext);
 const [loading, setloading] = useState(false)
-  const formik = useFormik({
+    const formik = useFormik({
     initialValues: {
       title: '',
       description: '',
@@ -31,9 +32,12 @@ const [loading, setloading] = useState(false)
     validationSchema,
     onSubmit: handleAddProject,
   });
-
-  // Function to handle form submission
-  async function handleAddProject(values: any) {
+  async function handleAddProject(values: {
+    title: string;
+    description: string;
+    link: string;
+    image: File | null;
+  }) {
     try {
 
   setloading(true)

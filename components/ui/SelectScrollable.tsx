@@ -9,8 +9,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function SelectScrollable({ onSkillSelect }:any) {
-  const handleSelectChange = (value:string) => {
+// Define the prop types for SelectScrollable
+interface SelectScrollableProps {
+  onSkillSelect?: (value: string) => void; // Optional function that receives a string
+}
+
+export function SelectScrollable({ onSkillSelect }: SelectScrollableProps) {
+  const handleSelectChange = (value: string) => {
     if (onSkillSelect) {
       onSkillSelect(value);
     }

@@ -10,8 +10,12 @@ import {
 } from "@/components/ui/select";
 import { categories } from "@/lib/data";
 
+// Define the prop types for SelectCatagory
+interface SelectCatagoryProps {
+  onSkillSelect?: (value: string) => void; // Optional function that receives a string
+}
 
-export function SelectCatagory({ onSkillSelect }: any) {
+export function SelectCatagory({ onSkillSelect }: SelectCatagoryProps) {
   const handleSelectChange = (value: string) => {
     if (onSkillSelect) {
       onSkillSelect(value);

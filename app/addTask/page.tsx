@@ -14,7 +14,9 @@ import { Button } from "@/components/ui/button";
 import { SelectCatagory } from "@/components/ui/SelectCatagory";
 import { FreelancerContext } from "@/Context/FreelancerContext";
 
-// Validation schema for form fields
+
+export default function AddTask() {
+  // Validation schema for form fields
 const validationSchema = Yup.object({
   title: Yup.string().required("Title is required"),
   description: Yup.string().required("Description is required"),
@@ -25,8 +27,6 @@ const validationSchema = Yup.object({
   maxPrice: Yup.number().required("Maximum Price is required"),
   category: Yup.string().required("Category is required"),  // Validate category
 });
-
-export default function AddTask() {
   let {AddTask}:any = useContext(FreelancerContext)
   const [skills, setSkills] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -46,12 +46,11 @@ export default function AddTask() {
     onSubmit: async (values) => {
       setLoading(true);
       try {
-      console.log(values);
-      let result = await AddTask(values);
-        console.log(result);
+      const result = await AddTask(values);
         toast.success("Task added successfully!");
       formik.resetForm();
       } catch (error) {
+        console.log(error); 
         toast.error("An error occurred. Please try again.");
       } finally {
         setLoading(false);

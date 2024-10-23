@@ -9,16 +9,33 @@ import { UserContext } from "@/Context/UserContext";
 import FormOffer from "../FormOffer";
 import Loader from "@/components/Const/loader"; // Assuming you have a Loader component
 
+// Define interfaces for the Project and Offer
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  is_opened: boolean;
+  created_at: string;
+  min_price: number;
+  max_price: number;
+  deadline_duration: number;
+  average_bid?: number;
+  no_of_offers: number;
+  keywords?: string[];
+  client: any;
+  platform?: string;
+}
+
 export default function ProjectDetails() {
   // * Variables
   const { fetchOffers, fetchDetails } = useContext(UserContext);
-  const { id } = useParams<{ id: string }>();
-  const [project, setProject] = useState<any>(null);
-  const [offers, setOffers] = useState<any[]>([]);
+  const { id } = useParams<{ id: any }>();
+  const [project, setProject] = useState<Project | any>(null); // Project state with type
+  const [offers, setOffers] = useState<any[]>([]); // Offers state with type
   const [update, setUpdate] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true); // Loading state
-  const [error, setError] = useState<any>();
-  const [state, setState] = useState(false);
+  const [error, setError] = useState<string | null>(null); // Error state
+  const [state, setState] = useState<boolean>(false);
 
   // Fetch Project Details
   async function fetchProjectDetails(id: string) {
@@ -27,6 +44,7 @@ export default function ProjectDetails() {
       const result = await fetchDetails(id);
       setProject(result);
     } catch (error) {
+      console.error(error);
       setError("Failed to load project details.");
     } finally {
       setLoading(false); // Set loading to false once data is fetched
@@ -39,8 +57,8 @@ export default function ProjectDetails() {
       const result = await fetchOffers(id);
       setOffers(result);
       console.log(result);
-      
     } catch (error) {
+      console.error(error);
       setError("Failed to load project offers.");
     }
   }
@@ -62,11 +80,7 @@ export default function ProjectDetails() {
 
   if (loading) {
     // Show loading spinner when fetching data
-    return (
-
-        <Loader />
-
-    );
+    return <Loader />;
   }
 
   return (
@@ -130,9 +144,9 @@ export default function ProjectDetails() {
           {/* Offers Section */}
           <div className="bg-white flex flex-col border rounded-lg">
             <h4 className="text-xl border-b border-gray-300 p-4">Offers</h4>
-            {offers ? (
+            {offers.length ? (
               offers.map((offer, index) => {
-                if (offer == null) {
+                if (!offer) {
                   return null; // Skip empty or invalid offers
                 }
                 return (
@@ -141,7 +155,7 @@ export default function ProjectDetails() {
                     setUpdate={setUpdate}
                     setState={setState}
                     Offer={offer}
-                    index={index}
+                    
                   />
                 );
               })

@@ -1,23 +1,39 @@
 "use client";
 import { UserContext } from "@/Context/UserContext";
 import { useContext, useEffect, useState } from "react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
+import Image from "next/image";
+
+interface ProfileData {
+  first_name: string;
+  last_name: string;
+  bio?: string;
+  image_url?: string;
+  average_rating?: number;
+  skills?: string[];
+}
+
+interface Review {
+  comment: string;
+}
 
 export default function FreelanceProfile() {
   const placeholderImage =
     "https://t4.ftcdn.net/jpg/02/17/34/67/240_F_217346782_7XpCTt8bLNJqvVAaDZJwvZjm0epQmj6j.jpg";
-  const { UserProfile, Reviews }: any = useContext(UserContext);
-  const { id }: any = useParams();
-  const [profileData, setProfileData] = useState<any>(null);
-  const [reviewData, setReviewData] = useState<any>([]);
+  
+  let { UserProfile, Reviews }: { UserProfile: (id: number) => Promise<{ profileData: ProfileData }>, Reviews: () => Promise<Review[]> } = useContext(UserContext);
+  const { id }:any = useParams();
+  
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [reviewData, setReviewData] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch user profile data
   async function fetchData(id: number) {
     try {
-      let Profile = await UserProfile(id);
-      let Review = await Reviews();
+      const Profile = await UserProfile(id);
+      const Review = await Reviews();
       setReviewData(Review);
       setProfileData(Profile?.profileData || null);
     } catch (error) {
@@ -34,11 +50,11 @@ export default function FreelanceProfile() {
     }
   }, [id]);
 
- return (
+  return (
     <div className="pt-20 md:pt-24">
       <div className="bg-white border flex flex-col gap-3 rounded-xl p-3 border-gray-200">
         <div className="flex justify-center items-center flex-col gap-3">
-          <img
+          <Image
             src={profileData?.image_url || placeholderImage}
             alt="profile"
             width={80}
@@ -102,7 +118,7 @@ export default function FreelanceProfile() {
             <h4 className="text-xl border-b border-gray-300 text-primary font-semibold p-4">Reviews</h4>
             <div className="flex flex-wrap gap-2 items-center p-4 flex-1">
               {reviewData && reviewData.length > 0 ? (
-                reviewData.map((review: any, index: number) => (
+                reviewData.map((review: Review, index: number) => (
                   <p
                     key={index}
                     className="border px-2 py-1 md:text-sm text-xs text-black/75 bg-gray-200 rounded-full"

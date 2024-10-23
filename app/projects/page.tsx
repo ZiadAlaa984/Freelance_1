@@ -6,10 +6,9 @@ import SidebarProducts from "./SidebarProducts";
 import Model from "./Model";
 import Tasks from "@/components/ui/Tasks";
 import Loader from "@/components/Const/loader"; // Assuming you have a Loader component
-import React from 'react'
 
 export default function Projects() {
-  const { fetchTasks }: any = useContext(UserContext);
+  const { fetchTasks } = useContext<any>(UserContext);
   const [tasks, setTasks] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -18,10 +17,12 @@ export default function Projects() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true); // Add loading state
 
+  // Fetch tasks whenever dependencies change
   useEffect(() => {
     fetchData(searchQuery, selectedCategory, selectedDeliveryTime, values);
   }, [searchQuery, selectedCategory, selectedDeliveryTime, values]);
-  // First useEffect: Handles initial data fetching with the loader
+
+  // Initial data fetching with the loader
   useEffect(() => {
     const initialFetch = async () => {
       setLoading(true); // Show loader initially
@@ -38,11 +39,10 @@ export default function Projects() {
     values: number[]
   ) {
     try {
-      let result = await fetchTasks(searchQuery, selectedCategory, selectedDeliveryTime, values);
+      const result = await fetchTasks(searchQuery, selectedCategory, selectedDeliveryTime, values);
       setTasks(result);
     } catch (error) {
       console.error("Error fetching tasks:", error);
-    } finally {
     }
   }
 
@@ -50,38 +50,57 @@ export default function Projects() {
   const handleModalToggle = () => {
     setIsModalVisible((prev) => !prev);
   };
+
   return (
     <>
-      {loading ? <Loader /> : <section className="pt-[100px]  mx-auto">
-        <div className="flex justify-between  items-center">
-          <h2 className="text-3xl capitalize font-bold text-[#3c8224]">
-            Open Projects
-          </h2>
-          <span className="border block p-2 rounded-lg  lg:hidden">
-            <FaSliders
-              onClick={handleModalToggle}
-              className="text-xl block lg:hidden cursor-pointer"
-            />
-          </span>
-        </div>
-        <div className="grid lg:gap-6 gap-0 mt-5 w-full grid-cols-4">
-          {/* Check if loading is true, and show loader */}
-          {loading ? (
-            <div className="col-span-4 text-center">
-              <Loader /> {/* Display a loader */}
-            </div>
-          ) : (
-            <>
-              <div className="lg:col-span-3 col-span-4 h-fit grid-cols-1 grid gap-y-6">
-                {tasks.length > 0 ? (
-                  tasks.map((task) => <Tasks key={task.id} task={task} />)
-                ) : (
-                  <div className="text-2xl text-center font-semibold capitalize">No projects exist</div>
-                )}
+      {loading ? <Loader /> : (
+        <section className="pt-[100px] mx-auto">
+          <div className="flex justify-between items-center">
+            <h2 className="text-3xl capitalize font-bold text-[#3c8224]">
+              Open Projects
+            </h2>
+            <span className="border block p-2 rounded-lg lg:hidden">
+              <FaSliders
+                onClick={handleModalToggle}
+                className="text-xl block lg:hidden cursor-pointer"
+              />
+            </span>
+          </div>
+          <div className="grid lg:gap-6 gap-0 mt-5 w-full grid-cols-4">
+            {/* Check if loading is true, and show loader */}
+            {loading ? (
+              <div className="col-span-4 text-center">
+                <Loader /> {/* Display a loader */}
               </div>
+            ) : (
+              <>
+                <div className="lg:col-span-3 col-span-4 h-fit grid-cols-1 grid gap-y-6">
+                  {tasks.length > 0 ? (
+                    tasks.map((task) => <Tasks key={task.id} task={task} />)
+                  ) : (
+                    <div className="text-2xl text-center font-semibold capitalize">No projects exist</div>
+                  )}
+                </div>
 
-              {/* Sidebar for filtering products */}
-              <SidebarProducts
+                {/* Sidebar for filtering products */}
+                <SidebarProducts
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  setSelectedCategory={setSelectedCategory}
+                  selectedCategory={selectedCategory}
+                  setSelectedDeliveryTime={setSelectedDeliveryTime}
+                  selectedDeliveryTime={selectedDeliveryTime}
+                  setValues={setValues}
+                  values={values}
+                />
+              </>
+            )}
+
+            {/* Modal for mobile view filtering */}
+            {isModalVisible && (
+              <Model
+                isModalVisible={isModalVisible}
+                onClose={handleModalToggle} // Close modal when onClose is triggered
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 setSelectedCategory={setSelectedCategory}
@@ -91,27 +110,10 @@ export default function Projects() {
                 setValues={setValues}
                 values={values}
               />
-            </>
-          )}
-
-          {/* Modal for mobile view filtering */}
-          {isModalVisible && (
-            <Model
-              isModalVisible={isModalVisible}
-              onClose={handleModalToggle} // Close modal when onClose is triggered
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              setSelectedCategory={setSelectedCategory}
-              selectedCategory={selectedCategory}
-              setSelectedDeliveryTime={setSelectedDeliveryTime}
-              selectedDeliveryTime={selectedDeliveryTime}
-              setValues={setValues}
-              values={values}
-            />
-          )}
-        </div>
-      </section>}
+            )}
+          </div>
+        </section>
+      )}
     </>
   );
 }
-

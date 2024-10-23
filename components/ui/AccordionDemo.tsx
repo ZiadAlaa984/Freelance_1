@@ -29,7 +29,7 @@ export function AccordionDemo() {
       <AccordionItem value="item-4">
         <AccordionTrigger>What is the turnaround time for a project?</AccordionTrigger>
         <AccordionContent>
-          The turnaround time depends on the size and complexity of the project. I usually provide time estimates during the initial negotiation phase. I will provide a precise estimate and keep you informed throughout the project's progress.
+          The turnaround time depends on the size and complexity of the project. I usually provide time estimates during the initial negotiation phase. I will provide a precise estimate and keep you informed throughout the project progress.
         </AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-5">

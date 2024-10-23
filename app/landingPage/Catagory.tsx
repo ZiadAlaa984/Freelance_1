@@ -1,10 +1,5 @@
 import { categories } from '@/lib/data';
 import React from 'react';
-import { RiStarSFill } from "react-icons/ri";
-
-// Define the category data
-
-
 export default function Catagory() {
     return (
     <section className=' flex flex-col gap-8'>

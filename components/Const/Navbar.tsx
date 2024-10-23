@@ -7,10 +7,19 @@ import { Button } from "../ui/button";
 import { UserContext } from "@/Context/UserContext";
 import { usePathname } from "next/navigation";
 
+// Define UserContextType if not already defined
+interface UserContextType {
+  Token: string | null;
+  setToken: (token: string | null) => void;
+  Role: string | null;
+  setRole: (role: string | null) => void;
+}
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { Token, setToken , setRole ,Role  }: any = useContext(UserContext);
+  const { Token, setToken, setRole, Role } = useContext<UserContextType>(UserContext);
   const pathname = usePathname(); // Get the current path
+
   function logOut() {
     localStorage.removeItem('Token');
     localStorage.removeItem('Role');
@@ -44,12 +53,12 @@ export default function Navbar() {
                 <li className={`font-semibold ${isActive('/projects')}`}>
                   <Link href="/projects">Find Projects</Link>
                 </li>
-                {Role == "freelancer" ? (
+                {Role === "freelancer" ? (
                   <li className={`font-semibold ${isActive('/profile')}`}>
                     <Link href="/profile">Profile</Link>
                   </li>
-                ): (
-                 <li className={`font-semibold ${isActive('/addTask')}`}>
+                ) : (
+                  <li className={`font-semibold ${isActive('/addTask')}`}>
                     <Link href="/addTask">Add Task</Link>
                   </li>
                 )}
@@ -114,11 +123,6 @@ export default function Navbar() {
                     </li>
                   )}
                 </ul>
-              )}
-              {!Token && (
-                <Button>
-                  <Link href="/enter">Sign Up</Link>
-                </Button>
               )}
               {!Token && (
                 <Button>

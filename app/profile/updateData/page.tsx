@@ -8,23 +8,40 @@ import React, { useContext, useEffect, useState } from "react";
 import { IoIosCloseCircle } from "react-icons/io";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-export default function UpdateData() {
-  const [skills, setSkills] = useState<string[]>([]); // Explicitly set type for skills
-  const { UserProfile }: any = useContext(UserContext);
-  const { UpdateInfo }: any = useContext(FreelancerContext);
 
-  const [bio, setBio] = useState<string>(""); // Set initial state as empty string
+// Define UserProfile and Context types
+interface UserProfile {
+  profileData: {
+    bio: string;
+    skills: string[];
+  };
+}
+
+interface UserContextType {
+  UserProfile: () => Promise<UserProfile>;
+}
+
+interface FreelancerContextType {
+  UpdateInfo: (update: { bio: string; skills: string[] }) => Promise<{ message: string }>;
+}
+
+export default function UpdateData() {
+  const [skills, setSkills] = useState<string[]>([]);
+  const { UserProfile }: UserContextType = useContext(UserContext);
+  const { UpdateInfo }: FreelancerContextType = useContext(FreelancerContext);
+
+  const [bio, setBio] = useState<string>("");
   const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false); // State to manage updating status
+  const [updating, setUpdating] = useState(false);
 
   async function fetchData() {
     try {
-      let profile = await UserProfile();
-      setBio(profile.profileData.bio || ""); // Set bio if exists
-      setSkills(profile?.profileData?.skills || []); // Set skills if exists
+      const profile = await UserProfile();
+      setBio(profile.profileData.bio || "");
+      setSkills(profile?.profileData?.skills || []);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      console.error("Error fetching profile data:", error);
       alert("Failed to fetch profile data. Please try again later.");
     }
   }
@@ -34,7 +51,6 @@ export default function UpdateData() {
   }, []);
 
   const handleSkillSelect = (skill: string) => {
-    // Ensure skill is not empty and does not already exist in the array
     if (skill && !skills.includes(skill)) {
       setSkills((prevSkills) => [...prevSkills, skill]);
     } else {
@@ -43,33 +59,36 @@ export default function UpdateData() {
   };
 
   const deleteSkills = (skill: string) => {
-    // Update skills array, removing the selected skill
     setSkills((prevSkills) => prevSkills.filter((s) => s !== skill));
   };
 
   const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setBio(e.target.value); // Update the bio state as the user types
+    setBio(e.target.value);
   };
 
   const updateData = async () => {
-    setUpdating(true); // Set loading state for update
-    let update = {
-      bio: bio,
-      skills: skills,
+    setUpdating(true);
+    const update = {
+      bio,
+      skills,
     };
     try {
-      let result = await UpdateInfo(update);
+      const result = await UpdateInfo(update);
       console.log(result);
       toast.success(result.message);
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred.");
+      }
     } finally {
-      setUpdating(false); // Reset updating state
+      setUpdating(false);
     }
   };
 
   if (loading) {
-    return <div>Loading...</div>; // Loading state for fetching data
+    return <div>Loading...</div>;
   }
 
   return (
@@ -81,17 +100,15 @@ export default function UpdateData() {
           <Textarea
             rows={8}
             id="description"
-            value={bio} // Controlled value for textarea
-            onChange={handleBioChange} // Handle changes to textarea
-            placeholder="Type your bio here." // Placeholder for clarity
+            value={bio}
+            onChange={handleBioChange}
+            placeholder="Type your bio here."
           />
 
           <h4 className="text-xl text-primary font-semibold">Skills</h4>
-          {/* Passing handleSkillSelect to SelectScrollable */}
           <SelectScrollable onSkillSelect={handleSkillSelect} />
 
           <div className="flex flex-wrap gap-2 items-center border rounded-xl p-2 flex-1">
-            {/* Display selected skills as tags */}
             {skills.map((skill, index) => (
               <div
                 key={index}

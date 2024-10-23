@@ -1,25 +1,27 @@
-import * as React from "react"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
+// Define InputProps interface extending standard input attributes
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
-
+// Forward ref to the input component for better integration with forms
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type = "text", ...props }, ref) => {
     return (
       <input
         type={type}
         className={cn(
-          "flex h-9 w-full  border border-zinc-200 bg-transparent rounded-md px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-zinc-950 placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:file:text-zinc-50 dark:placeholder:text-zinc-400 dark:focus-visible:ring-zinc-300",
+          "flex h-9 w-full border border-zinc-200 bg-transparent rounded-md px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-zinc-950 placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:file:text-zinc-50 dark:placeholder:text-zinc-400 dark:focus-visible:ring-zinc-300",
           className
         )}
         ref={ref}
-        {...props}
+        {...props} // Spread the remaining props to the input element
       />
-    )
+    );
   }
-)
-Input.displayName = "Input"
+);
 
-export { Input }
+// Set display name for the component for better debugging
+Input.displayName = "Input";
+
+export { Input };

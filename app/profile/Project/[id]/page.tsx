@@ -1,9 +1,9 @@
 'use client';
 import Loader from '@/components/Const/loader';
 import { UserContext } from '@/Context/UserContext';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
-import { FaPlus } from 'react-icons/fa';
 
 export default function Project() {
   const { id } = useParams<{ id: string }>();
@@ -50,7 +50,7 @@ export default function Project() {
         {/* Main Project Image */}
         <div className="xl:col-span-3 col-span-4 flex flex-col gap-6">
           <div className="bg-white  flex flex-col border overflow-hidden rounded-lg">
-            <img
+            <Image
               src={project?.project_image || imgPlaceHolder}
               alt={project?.title || 'Project Image'}
               className="w-full object-cover h-[400px]"

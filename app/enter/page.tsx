@@ -6,9 +6,9 @@ import React, { useState } from "react";
 import { FaUserTie, FaUser } from "react-icons/fa";
 
 export default function Enter() {
-  const [selected, setSelected] = useState(null);
+const [selected, setSelected] = useState<string>("");
 
-  const handleCheckboxChange = (value: any) => {
+  const handleCheckboxChange = (value: string) => {
     setSelected(value);
   };
 
@@ -32,7 +32,7 @@ export default function Enter() {
               id="client"
             />
             <p className="text-center  flex text-primary flex-col items-center gap-6 font-medium text-xl md:text-2xl">
-              <FaUserTie /> I’m a client, hiring for a project
+              <FaUserTie /> I am a client, hiring for a project
             </p>
           </div>
           <div

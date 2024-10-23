@@ -3,34 +3,47 @@ import Loader from "@/components/Const/loader";
 import { UserContext } from "@/Context/UserContext";
 import React, { useContext, useEffect, useState } from "react";
 
-export default function ProfileData() {
-  const { Reviews, UserProfile }: any = useContext(UserContext);
+// Define interfaces for profile and review data
+interface Profile {
+  bio: string;
+  first_name: string;
+  last_name: string;
+  average_rating: number;
+  skills: string[];
+}
 
-  const [profileData, setProfileData] = useState<any>(null);
-  const [reviewData, setReviewData] = useState<any>(null);
+interface Review {
+  comment: string;
+}
+
+export default function ProfileData() {
+  const { Reviews, UserProfile }: { Reviews: () => Promise<Review[]>, UserProfile: () => Promise<{ profileData: Profile }> } = useContext(UserContext);
+
+  const [profileData, setProfileData] = useState<Profile | null>(null);
+  const [reviewData, setReviewData] = useState<Review[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   async function fetchData() {
     try {
-      let Profile = await UserProfile();
-      let Review = await Reviews();
+      const Profile = await UserProfile();
+      const Review = await Reviews();
       setProfileData(Profile.profileData);
       setReviewData(Review);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching tasks:", error);
-      alert("Failed to fetch tasks. Please try again later.");
+      console.error("Error fetching data:", error);
+      alert("Failed to fetch data. Please try again later.");
     }
   }
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  if (loading) return <><Loader/> </>;
-
+  if (loading) return <Loader />;
 
   return (
-    <section className="grid grid-cols-4 gap-6 ">
+    <section className="grid grid-cols-4 gap-6">
       <div className="xl:col-span-3 col-span-4 flex flex-col">
         <div className="bg-white h-full flex flex-col border rounded-lg">
           <h4 className="text-xl border-b border-gray-300 p-4 text-primary font-semibold">Bio</h4>
@@ -75,16 +88,16 @@ export default function ProfileData() {
           <h4 className="text-xl border-b border-gray-300 text-primary font-semibold p-4">Reviews</h4>
           <div className="flex flex-wrap gap-2 items-center p-4 flex-1">
             {reviewData && reviewData.length > 0 ? (
-              reviewData.map((review: any, index: number) => (
+              reviewData.map((review: Review, index: number) => (
                 <p
                   key={index}
                   className="border px-2 py-1 md:text-sm text-xs text-black/75 bg-gray-200 rounded-full"
                 >
-                  {review.comment}{" "}
+                  {review.comment}
                 </p>
               ))
             ) : (
-              <p className='text-xl  text-center w-full capitalize'>No reviews available.</p>
+              <p className="text-xl text-center w-full capitalize">No reviews available.</p>
             )}
           </div>
         </div>
